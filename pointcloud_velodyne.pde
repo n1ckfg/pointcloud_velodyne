@@ -1,4 +1,4 @@
-String fileName = "0000000016.bin";
+String fileName = "output1.bin";
 String fileNameNoExt = "";
 float globalScale = 1;
 
