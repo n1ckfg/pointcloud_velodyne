@@ -84,3 +84,15 @@ String decodeStringFromBase64(String input) {
   returns = in.toString();
   return returns;
 }
+
+// https://stackoverflow.com/questions/4513498/java-bytes-to-floats-ints
+int asInt(byte[] bytes) {
+  return (bytes[0] & 0xFF) 
+         | ((bytes[1] & 0xFF) << 8) 
+         | ((bytes[2] & 0xFF) << 16) 
+         | ((bytes[3] & 0xFF) << 24);
+}
+
+float asFloat(byte[] bytes) {
+  return Float.intBitsToFloat(asInt(bytes));
+}
