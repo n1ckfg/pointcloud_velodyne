@@ -2,8 +2,8 @@ String fileName = "example001.bin";
 String fileNameNoExt = "";
 float globalScale = 1;
 
-byte[] readBytes;
-String[] readLines;
+ReadMode readMode = ReadMode.BIN;
+
 ArrayList<PVector> points = new ArrayList<PVector>();
 ArrayList<PVector> displayPoints = new ArrayList<PVector>();
 Cam cam;
@@ -20,8 +20,15 @@ void setup() {
   for (int i=0; i<splits.length-1; i++) {
     fileNameNoExt += splits[i];
   }
-  
-  readPointCloud();
+  String ext = splits[splits.length-1].toLowerCase();
+  if (ext.equals("bin")) {
+    readMode = ReadMode.BIN;
+    readVelodyneBinary();
+  } else {
+    readMode = ReadMode.TXT;
+    readVelodyneText();
+  }
+
   writePointCloud();
   
   cam = new Cam();
@@ -43,27 +50,7 @@ void draw() {
   surface.setTitle(""+frameRate);
 }
 
-void readPointCloud() {
-  readBytes = loadBytes(fileName);
-  //readLines = decodeNBits(readBytes, 12);
-   for (int i = 0; i < readBytes.length; i+=16) { 
-     byte[] bytesX = { readBytes[i], readBytes[i+1], readBytes[i+2], readBytes[i+3] };
-     byte[] bytesY = { readBytes[i+4], readBytes[i+5], readBytes[i+6], readBytes[i+7] };
-     byte[] bytesZ = { readBytes[i+8], readBytes[i+9], readBytes[i+10], readBytes[i+11] };
-     byte[] bytesW = { readBytes[i+12], readBytes[i+13], readBytes[i+14], readBytes[i+15] };
-
-    float x = asFloat(bytesX);
-    float y = asFloat(bytesY);
-    float z = asFloat(bytesZ);
-    float w = asFloat(bytesW);
-    if (!Float.isNaN(x) && !Float.isNaN(y) && !Float.isNaN(z)) {
-      points.add(new PVector(x, y, z));
-      displayPoints.add(new PVector(x, -z, y).mult(globalScale));
-    }
-  }
-  println("Read " + fileName + ".");
-}
-
+// TODO replace with PointExport methods
 void writePointCloud() {
   String[] writeLines = new String[points.size()];
   for (int i=0; i<points.size(); i++) {

@@ -96,3 +96,32 @@ int asInt(byte[] bytes) {
 float asFloat(byte[] bytes) {
   return Float.intBitsToFloat(asInt(bytes));
 }
+
+// https://forum.processing.org/two/discussion/23446/saving-multi-dimensional-arrays
+// https://forum.processing.org/one/topic/writing-and-reading-a-mixture-of-ints-and-float-to-from-a-file.html
+void serializeFloats(float[] _floats, String _fileName) {
+  try {
+    java.io.FileOutputStream fileOut = new java.io.FileOutputStream(sketchPath("") + "/" + _fileName);
+    java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(fileOut);
+    out.writeObject(_floats);
+    out.close();
+    fileOut.close();
+  } catch(IOException i) {
+    i.printStackTrace();
+  }
+}
+
+// http://forum.arduino.cc/index.php?topic=180456.0
+void floatsToBytes(float[] floats, String _fileName) {
+  byte[] bytes = new byte[floats.length * 4];
+  
+  for(int i=0; i<floats.length; i++) {
+    int fi = Float.floatToIntBits(floats[i]);
+    bytes[(i*4)] = byte(fi & 0xFF);
+    bytes[(i*4)+1] = byte((fi >> 8) & 0xFF);
+    bytes[(i*4)+2] = byte((fi >> 16) & 0xFF);
+    bytes[(i*4)+3] = byte((fi >> 24) & 0xFF);
+  }
+  
+  saveBytes(_fileName, bytes);
+}
