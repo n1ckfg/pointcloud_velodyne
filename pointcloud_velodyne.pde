@@ -32,13 +32,18 @@ void setup() {
   writePointCloud();
   
   cam = new Cam();
-  cam.displayText = "Press space for detail";
+  //cam.displayText = "Press space for detail";
   
   strokeWeight(strokeWeightLow);
   stroke(255, 127);
 }
 
 void draw() {
+  if (!keyPressed && millis() > markTime + 100) {
+    density = densityHigh;
+    strokeWeight(strokeWeightHigh);
+  }
+  
   background(0);
   for (int i=0; i<points.size(); i+=density) {
     PVector p = displayPoints.get(i);
